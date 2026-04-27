@@ -1637,4 +1637,208 @@ export default function App() {
       </div>
     </div>
   );
-}
+}diff --git a/src/App.jsx b/src/App.jsx
+index 82923d2c864138712d62b26f456fd3a25e3349c0..f453b0fec32a8d0bad2897c4cad7fa8a9268f094 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -1140,50 +1140,59 @@ const SearchModal = ({ lang, onClose, onNav }) => {
+     </div>
+   );
+ };
+ 
+ /* ═══════════════════════════════════════════════════════
+    SIDEBAR
+ ══════════════════════════════════════════════════════════ */
+ const SidebarContent = ({ lang, cur, onNav }) => {
+   const [open, setOpen] = useState(() => {
+     const s = {};
+     NAV.forEach(it => { if (it.ch?.some(c=>c.id===cur) || it.id===cur) s[it.id]=true; });
+     return s;
+   });
+   const tog = id => setOpen(s=>({...s,[id]:!s[id]}));
+ 
+   return (
+     <div style={{ display:"flex", flexDirection:"column", height:"100%" }}>
+       {/* Logo */}
+       <div style={{ padding:"14px 16px", borderBottom:"1px solid rgba(0,212,170,.12)", marginBottom:6 }}>
+         <button onClick={()=>onNav("home")} style={{ display:"flex", alignItems:"center", gap:8, background:"none", border:"none", cursor:"pointer", padding:0 }}>
+           <ArcMark size={22}/><Wordmark/>
+         </button>
+       </div>
+       {/* Nav */}
+       <nav style={{ flex:1, overflowY:"auto", padding:"6px 8px" }}>
++        <a
++          href="/ecosystem"
++          className="sb-btn"
++          style={{ color:"#00d4aa", textDecoration:"none", border:"1px solid rgba(0,212,170,.2)", marginBottom:8 }}
++        >
++          <Icon name="globe" size={14} color="#00d4aa"/>
++          <span style={{ flex:1 }}>{lang==="tr" ? "Ecosystem Sayfası" : "/ecosystem Page"}</span>
++          <Icon name="ext" size={11} color="#00d4aa"/>
++        </a>
+         {NAV.map(item => {
+           const active = cur===item.id;
+           const childActive = item.ch?.some(c=>c.id===cur);
+           const label = lang==="tr" ? item.tr : item.en;
+           if (!item.ch) return (
+             <button key={item.id} onClick={()=>onNav(item.id)}
+               className={`sb-btn${active?" active":""}`}
+               style={{ color: active?"#00d4aa":childActive?"#94a3b8":"#64748b", borderLeft: active?"2px solid #00d4aa":"2px solid transparent" }}>
+               <Icon name={item.icon} size={14} color={active?"#00d4aa":undefined}/>
+               <span style={{ flex:1 }}>{label}</span>
+               {item.badge && <span style={{ fontSize:"9px", padding:"1px 5px", borderRadius:99, background:"rgba(0,212,170,.2)", color:"#00d4aa", fontWeight:600 }}>{item.badge}</span>}
+             </button>
+           );
+           return (
+             <div key={item.id} style={{ marginBottom:2 }}>
+               <button onClick={()=>tog(item.id)}
+                 className={`sb-btn parent${childActive?" has-active":""}`}>
+                 <Icon name={item.icon} size={14} color={childActive?"#00d4aa":undefined}/>
+                 <span style={{ flex:1, textAlign:"left" }}>{label}</span>
+                 {item.badge && <span style={{ fontSize:"9px", padding:"1px 5px", borderRadius:99, background:"rgba(0,212,170,.2)", color:"#00d4aa", fontWeight:600 }}>{item.badge}</span>}
+                 <Icon name="chevR" size={12} color="#334155" style={{ transform:open[item.id]?"rotate(90deg)":"rotate(0)", transition:"transform .2s", flexShrink:0 }}/>
+               </button>
+               {open[item.id] && (
+                 <div style={{ borderLeft:"1px solid rgba(0,212,170,.13)", marginLeft:22, paddingLeft:4, marginBottom:2 }}>
+                   {item.ch.map(c => {
+@@ -1266,50 +1275,58 @@ const Header = ({ lang, setLang, onSearch, onMenu, menuOpen }) => (
+     </button>
+     {/* Lang */}
+     <div style={{ display:"flex", borderRadius:7, border:"1px solid rgba(0,212,170,.15)", overflow:"hidden" }}>
+       {["en","tr"].map(l=>(
+         <button key={l} onClick={()=>setLang(l)}
+           style={{ padding:"4px 9px", fontSize:"12px", fontWeight:500, background:lang===l?"rgba(0,212,170,.15)":"transparent", color:lang===l?"#00d4aa":"#475569", border:"none", cursor:"pointer", textTransform:"uppercase", fontFamily:"'Inter',sans-serif" }}>
+           {l}
+         </button>
+       ))}
+     </div>
+     {/* External */}
+     <a href="https://docs.arc.network" target="_blank" rel="noopener" className="ext-a sm-show" style={{ display:"flex", alignItems:"center", gap:4 }}>
+       Docs <Icon name="ext" size={11} color="currentColor"/>
+     </a>
+     <a href="https://x.com/arc" target="_blank" rel="noopener" style={{ display:"flex", color:"#475569", padding:4, borderRadius:6, transition:"color .15s" }}>
+       <XLogo size={15}/>
+     </a>
+   </header>
+ );
+ 
+ /* ═══════════════════════════════════════════════════════
+    HOME PAGE
+ ══════════════════════════════════════════════════════════ */
+ const HomePage = ({ lang, onNav }) => {
+   const T = (en, tr) => lang==="tr" ? tr : en;
++  const FEATURED_DAPPS = [
++    { name:"Aave", category:"DeFi", description:T("Leading DeFi lending protocol","Önde gelen DeFi borç verme protokolü"), logo:"https://via.placeholder.com/80x80/0d1525/00d4aa?text=A" },
++    { name:"Curve", category:"DeFi", description:T("Best stablecoin exchange","En iyi stablecoin borsası"), logo:"https://via.placeholder.com/80x80/0d1525/00d4aa?text=C" },
++    { name:"Axelar", category:"Infrastructure", description:T("Cross-chain interoperability","Zincirler arası birlikte çalışabilirlik"), logo:"https://via.placeholder.com/80x80/0d1525/00d4aa?text=AX" },
++    { name:"Hinkal", category:"Wallets", description:T("Zero-knowledge wallet","Sıfır bilgi cüzdanı"), logo:"https://via.placeholder.com/80x80/0d1525/00d4aa?text=H" },
++    { name:"Uniswap Labs", category:"DeFi", description:T("Leading DEX","Önde gelen DEX"), logo:"https://via.placeholder.com/80x80/0d1525/00d4aa?text=UNI" },
++    { name:"Alchemy", category:"Tools", description:T("Web3 developer platform","Web3 geliştirici platformu"), logo:"https://via.placeholder.com/80x80/0d1525/00d4aa?text=AL" },
++  ];
+   const FEATURES = [
+     { icon:"zap",    id:"finality",      en:"Deterministic Finality",  tr:"Deterministik Kesinlik",  den:"Sub-second, zero reorg",         dtr:"Saniyenin altında, sıfır yeniden düzenleme", c:"#00d4aa" },
+     { icon:"dollar", id:"fees",          en:"Stable USDC Gas",         tr:"Sabit USDC Gas",          den:"$0.01 base fee, fiat-pegged",    dtr:"$0.01 taban ücreti, fiat sabitli",           c:"#0ea5e9" },
+     { icon:"code",   id:"evm",           en:"Full EVM Compatibility",  tr:"Tam EVM Uyumluluğu",      den:"Solidity, Hardhat, Foundry",     dtr:"Değişiklik yapmadan deploy et",              c:"#00d4aa" },
+     { icon:"shield", id:"privacy",       en:"Opt-in Privacy",          tr:"İsteğe Bağlı Gizlilik",   den:"Confidential when needed",       dtr:"Gerektiğinde gizli transferler",             c:"#0ea5e9" },
+     { icon:"brain",  id:"ai-agents",     en:"AI Agent Standards",      tr:"Yapay Zeka Standartları",  den:"ERC-8004 identity & ERC-8183",   dtr:"ERC-8004 kimlik ve ERC-8183 işler",          c:"#00d4aa" },
+     { icon:"globe",  id:"circle",        en:"Circle Ecosystem",        tr:"Circle Ekosistemi",        den:"CCTP, Gateway, USDC, EURC",      dtr:"CCTP, Gateway, USDC, EURC",                  c:"#0ea5e9" },
+   ];
+   const STATS = [
+     { v:"<1s",    l:T("Finality","Kesinlik"),       s:"Deterministic", c:"#00d4aa" },
+     { v:"USDC",   l:T("Gas Token","Gas Tokeni"),    s:"$0.01 base fee",c:"#0ea5e9" },
+     { v:"BFT",    l:T("Consensus","Konsensüs"),     s:"Malachite",     c:"#00d4aa" },
+     { v:"EVM",    l:T("Compatible","Uyumlu"),       s:"Full support",  c:"#0ea5e9" },
+     { v:"Opt-in", l:T("Privacy","Gizlilik"),        s:"Selective disc",c:"#00d4aa" },
+     { v:"🟢",     l:T("Status","Durum"),            s:"Testnet live",  c:"#d4982a" },
+   ];
+ 
+   return (
+     <div className="fade-up">
+       {/* HERO */}
+       <section style={{ position:"relative", overflow:"hidden", borderBottom:"1px solid rgba(0,212,170,.15)" }}>
+         <div style={{ position:"absolute", inset:0, background:"linear-gradient(135deg,#03060d 0%,#070d1a 50%,#0d1525 100%)" }}/>
+         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse at 50% -10%,rgba(0,212,170,.12) 0%,transparent 60%)" }}/>
+         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(0,212,170,.7),transparent)" }}/>
+         <div style={{ position:"relative", padding:"clamp(40px,8vw,72px) clamp(20px,6vw,56px)" }}>
+@@ -1372,50 +1389,79 @@ const HomePage = ({ lang, onNav }) => {
+                   <Icon name={f.icon} size={18} color={f.c}/>
+                 </div>
+                 <div>
+                   <div style={{ fontSize:"13px", fontWeight:600, color:"#e2e8f0", marginBottom:3 }}>{T(f.en,f.tr)}</div>
+                   <div style={{ fontSize:"12px", color:"#64748b", lineHeight:1.5 }}>{T(f.den,f.dtr)}</div>
+                 </div>
+                 <div style={{ marginTop:"auto", fontSize:"11px", color:"#334155", display:"flex", alignItems:"center", gap:4 }}>
+                   {T("Learn more","Daha fazla")} <Icon name="chevR" size={11} color="#334155"/>
+                 </div>
+               </button>
+             ))}
+           </div>
+         </section>
+ 
+         {/* COMPARISON */}
+         <section style={{ marginBottom:56 }}>
+           <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:18, flexWrap:"wrap", gap:8 }}>
+             <h2 style={{ fontFamily:"'Cinzel',serif", fontSize:"1.4rem", fontWeight:500, color:"#f1f5f9", letterSpacing:".02em" }}>{T("How Arc Compares","Arc Nasıl Karşılaştırılır")}</h2>
+             <button onClick={()=>onNav("comparison")} style={{ display:"flex", alignItems:"center", gap:5, fontSize:"12px", color:"#00d4aa", background:"none", border:"none", cursor:"pointer" }}>
+               {T("Full comparison","Tam karşılaştırma")} <Icon name="arrow" size={12} color="#00d4aa"/>
+             </button>
+           </div>
+           <CompareTable lang={lang}/>
+         </section>
+ 
++        {/* FEATURED dApps */}
++        <section style={{ marginBottom:56 }}>
++          <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", gap:8, flexWrap:"wrap", marginBottom:16 }}>
++            <h2 style={{ fontFamily:"'Cinzel',serif", fontSize:"1.25rem", fontWeight:500, color:"#f1f5f9", letterSpacing:".02em" }}>
++              {T("Featured dApps","Öne Çıkan dApp'ler")}
++            </h2>
++            <a href="/ecosystem" style={{ fontSize:"12px", color:"#00d4aa", textDecoration:"none" }}>
++              {T("View all projects →","Tüm projeler →")}
++            </a>
++          </div>
++          <p style={{ color:"#64748b", fontSize:".875rem", marginBottom:18 }}>
++            {T("A quick snapshot of teams building on Arc Public Testnet.","Arc Public Testnet üzerinde geliştiren ekiplerden kısa bir seçki.")}
++          </p>
++          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:10 }}>
++            {FEATURED_DAPPS.map((d)=>
++              <div key={d.name} style={{ border:"1px solid rgba(0,212,170,.14)", borderRadius:12, background:"rgba(7,13,26,.5)", padding:12 }}>
++                <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:8 }}>
++                  <img src={d.logo} alt={`${d.name} logo`} width={34} height={34} style={{ borderRadius:8, border:"1px solid rgba(0,212,170,.25)" }} />
++                  <div>
++                    <div style={{ fontSize:"13px", fontWeight:700, color:"#e2e8f0" }}>{d.name}</div>
++                    <span style={{ fontSize:"10px", color:"#00d4aa", border:"1px solid rgba(0,212,170,.25)", borderRadius:999, padding:"2px 7px" }}>{d.category}</span>
++                  </div>
++                </div>
++                <p style={{ fontSize:"12px", color:"#64748b", lineHeight:1.5 }}>{d.description}</p>
++              </div>
++            )}
++          </div>
++        </section>
++
+         {/* QUICK LINKS */}
+         <section style={{ marginBottom:56 }}>
+           <h2 style={{ fontFamily:"'Cinzel',serif", fontSize:"1.25rem", fontWeight:500, color:"#f1f5f9", marginBottom:14, letterSpacing:".02em" }}>{T("Quick Access","Hızlı Erişim")}</h2>
+           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:8 }}>
+             {[
+               { id:"getting-started", en:"Getting Started",     tr:"Başlangıç",              icon:"zap" },
+               { id:"architecture",    en:"Architecture",         tr:"Mimari",                 icon:"cpu" },
+               { id:"comparison",      en:"Comparison Table",     tr:"Karşılaştırma Tablosu",  icon:"chart" },
+               { id:"glossary",        en:"Glossary",             tr:"Sözlük",                 icon:"book" },
+               { id:"arc-house",       en:"Arc House Community",  tr:"Arc House Topluluğu",    icon:"users" },
+               { id:"testnet",         en:"Testnet Guide",        tr:"Test Ağı Rehberi",       icon:"clock" },
+             ].map(l=>(
+               <button key={l.id} onClick={()=>onNav(l.id)} className="quick-btn">
+                 <Icon name={l.icon} size={14} color="#475569"/>
+                 <span style={{ fontSize:"13px", color:"#94a3b8", flex:1, textAlign:"left" }}>{T(l.en,l.tr)}</span>
+                 <Icon name="chevR" size={12} color="#334155"/>
+               </button>
+             ))}
+           </div>
+         </section>
+ 
+         {/* PARTNERS */}
+         <section style={{ marginBottom:56 }}>
+           <h2 style={{ fontFamily:"'Cinzel',serif", fontSize:"1.25rem", fontWeight:500, color:"#f1f5f9", marginBottom:6, letterSpacing:".02em" }}>{T("Design Partners","Tasarım Ortakları")}</h2>
+           <p style={{ color:"#64748b", fontSize:".875rem", marginBottom:20 }}>{T("Global financial institutions shaping Arc's foundation.","Arc'ın temelini şekillendiren küresel finansal kurumlar.")}</p>
+            
+
